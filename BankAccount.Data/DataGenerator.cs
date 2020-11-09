@@ -15,12 +15,27 @@ namespace BankAccount.Data
             using (BankAccountContext context = new BankAccountContext(
                 serviceProvider.GetRequiredService<DbContextOptions<BankAccountContext>>()))
             {
-                // Look for any board games.
-                if (context.Banks.Any())
-                {
-                    return;   // Data was already seeded
-                }
+                Seed(context);
             }
+        }
+        public static void Seed(BankAccountContext context)
+        {
+            if (context.Banks.Any())
+            {
+                return;
+            }
+            Domain.Bank newBank = new Domain.Bank()
+            {
+                BankName = "The Awsome Bank"
+            };
+            context.Banks.Add(newBank);
+            Domain.User newUser = new Domain.User()
+            {
+                Name = "Partik",
+                Bank = newBank
+            };
+            context.Users.Add(newUser);
+            context.SaveChanges();
         }
     }
 }
