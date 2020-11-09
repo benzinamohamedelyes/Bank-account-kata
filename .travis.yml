@@ -8,7 +8,7 @@ matrix:
       before_script:
         - npm install -g @angular/cli
       script:
-      - cd Bank-account-kata\Bank-account-kata\ClientApp
+      - cd ./Bank-account-kata/ClientApp
       - ng lint
       - ng build --prod
     - language: csharp
