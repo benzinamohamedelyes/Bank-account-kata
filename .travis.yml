@@ -9,6 +9,7 @@ matrix:
         - npm install -g @angular/cli
       script:
       - cd ./Bank-account-kata/ClientApp
+      - npm install
       - ng lint
       - ng build --prod
     - language: csharp
