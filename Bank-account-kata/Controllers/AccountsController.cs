@@ -39,5 +39,11 @@ namespace Bank_account_kata.Controllers
             }
 
         }
+        // GET: api/Accounts
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Account>>> GetAllAccounts()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
