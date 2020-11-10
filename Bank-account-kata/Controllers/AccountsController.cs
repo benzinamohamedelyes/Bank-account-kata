@@ -24,7 +24,18 @@ namespace Bank_account_kata.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAccount(Account account)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }
