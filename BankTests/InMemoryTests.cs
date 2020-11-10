@@ -71,7 +71,7 @@ namespace BankTests
         public async Task GetAccount_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
-            builder.UseInMemoryDatabase("BankDataBase");
+            builder.UseInMemoryDatabase("BankDataBaseTwo");
 
             using (BankAccountContext context = new BankAccountContext(builder.Options))
             {
@@ -110,8 +110,12 @@ namespace BankTests
                 
                 var result = await controller.GetAccount(1);
                 var account = result.Value.Should().BeAssignableTo<Account>().Subject;
-                account.Balance.Should().Be(120);
+                account.Balance.Should().Be(3);
                 account.Id.Should().Be(1);
+
+                result = await controller.GetAccount(44);
+                result.Result.Should().BeOfType<NotFoundResult>();
+
             }
         }
     }

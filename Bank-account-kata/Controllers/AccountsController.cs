@@ -49,7 +49,15 @@ namespace Bank_account_kata.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
-            throw new NotImplementedException();
+            var account = await _accountService.GetAccount(id);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return new ActionResult<Account>(await _accountService.GetAccount(id));
+
         }
     }
 }

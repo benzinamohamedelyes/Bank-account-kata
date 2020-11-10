@@ -38,5 +38,11 @@ namespace Bank_account_kata.Services
         {
             return await _context.Accounts.ToListAsync();
         }
+
+        internal async Task<Account> GetAccount(int id)
+        {
+            var account = await _context.Accounts.FindAsync(id);
+            return account;
+        }
     }
 }
