@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BankAccount.Data;
 using BankAccount.Domain;
+using Bank_account_kata.Services;
 
 namespace Bank_account_kata.Controllers
 {
@@ -14,22 +15,23 @@ namespace Bank_account_kata.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly BankAccountContext _context;
+        private readonly AccountService _accountService;
 
-        public AccountsController(BankAccountContext context)
+        public AccountsController(AccountService accountService)
         {
-            _context = context;
+            _accountService = accountService;
         }
         // POST: api/Accounts
         [HttpPost]
-        public async Task<IActionResult> PostAccount(Account account)
+        public async Task<IActionResult> PostAccount([FromBody] Account account)
         {
             try
             {
-                _context.Accounts.Add(account);
-                await _context.SaveChangesAsync();
+                if (await _accountService.CreateAccount(account))
 
-                return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+                    return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {

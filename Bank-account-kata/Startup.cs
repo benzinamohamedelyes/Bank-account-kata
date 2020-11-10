@@ -1,3 +1,4 @@
+using Bank_account_kata.Services;
 using BankAccount.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,7 @@ namespace Bank_account_kata
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddTransient<AccountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
