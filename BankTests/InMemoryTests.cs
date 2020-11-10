@@ -18,7 +18,7 @@ namespace BankTests
         public void InitializeInitializeShouldHaveGenerateData()
         {
             var builder = new DbContextOptionsBuilder();
-            builder.UseInMemoryDatabase("CanInsertSamurai");
+            builder.UseInMemoryDatabase("BankDataBase");
             using (BankAccountContext context = new BankAccountContext(builder.Options))
             {
                 context.Database.EnsureCreated();
@@ -33,7 +33,7 @@ namespace BankTests
         public async Task PostAccount_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
-            builder.UseInMemoryDatabase("CanInsertSamurai");
+            builder.UseInMemoryDatabase("BankDataBase");
 
             using (BankAccountContext context = new BankAccountContext(builder.Options))
             {
@@ -55,7 +55,7 @@ namespace BankTests
                 {
                     Bank = bank,
                     Owner = user,
-                    Balance = 0
+                    Balance = 3
                 };
 
                 result = await controller.PostAccount(newAccount);
@@ -71,7 +71,7 @@ namespace BankTests
         public async Task GetAccount_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
-            builder.UseInMemoryDatabase("CanInsertSamurai");
+            builder.UseInMemoryDatabase("BankDataBase");
 
             using (BankAccountContext context = new BankAccountContext(builder.Options))
             {
@@ -87,13 +87,31 @@ namespace BankTests
                 {
                     Bank = bank,
                     Owner = user,
-                    Balance = 0
+                    Balance = 120
                 };
 
                 await controller.PostAccount(newAccount);
                 var result = await controller.GetAllAccounts();
                 var listAccounts = result.Value.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
                 listAccounts.Should().HaveCount(1);
+            }
+        }
+        [Fact]
+        public async Task GetAccountById_ReturnsIActionResult_WithAnAccount()
+        {
+            await PostAccount_ReturnsIActionResult_WithAnAccount();
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+                context.Database.EnsureCreated();
+                var controller = new AccountsController(new AccountService(context));
+                
+                var result = await controller.GetAccount(1);
+                var account = result.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(120);
+                account.Id.Should().Be(1);
             }
         }
     }
