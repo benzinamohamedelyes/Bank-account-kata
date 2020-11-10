@@ -43,7 +43,7 @@ namespace Bank_account_kata.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Account>>> GetAllAccounts()
         {
-            throw new NotImplementedException();
+            return new ActionResult<IEnumerable<Account>>(await _accountService.GetAllAccounts());
         }
     }
 }

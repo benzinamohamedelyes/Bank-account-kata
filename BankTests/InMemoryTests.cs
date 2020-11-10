@@ -92,24 +92,8 @@ namespace BankTests
 
                 await controller.PostAccount(newAccount);
                 var result = await controller.GetAllAccounts();
-                var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<Account>>>().Subject;
-                var listAccounts = actionResult.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
+                var listAccounts = result.Value.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
                 listAccounts.Should().HaveCount(1);
-
-                var anotherNewAccount = new Account()
-                {
-                    Bank = bank,
-                    Owner = user,
-                    Balance = 10
-                };
-                await controller.PostAccount(anotherNewAccount);
-                result = await controller.GetAllAccounts();
-                actionResult = result.Should().BeOfType<ActionResult<IEnumerable<Account>>>().Subject;
-                listAccounts = actionResult.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
-                listAccounts.Should().HaveCount(2);
-
-                listAccounts.ElementAt(0).Balance.Should().NotBe(listAccounts.ElementAt(1).Balance);
-               
             }
         }
     }

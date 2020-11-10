@@ -1,5 +1,7 @@
 ﻿using BankAccount.Data;
 using BankAccount.Domain;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +32,11 @@ namespace Bank_account_kata.Services
 
 
 
+        }
+
+        internal async Task<IEnumerable<Account>> GetAllAccounts()
+        {
+            return await _context.Accounts.ToListAsync();
         }
     }
 }

@@ -4,11 +4,13 @@ using System.Text;
 
 namespace BankAccount.Domain
 {
-    public class User
+    public class AccountHistory
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public Bank Bank { get; set; }
+        public Operation Operation { get; set; }
+        public int Amount { get; set; }
+        public DateTime Date { get; set; }
         public Account Account { get; set; }
+
     }
 }
