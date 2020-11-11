@@ -19,6 +19,6 @@ namespace BankAccount.Domain
         [Required]
         public Bank Bank { get; set; }
         public int Balance { get; set; }
-        public IEnumerable<AccountHistory> AccountHistories { get; set; }
+        public ICollection<AccountHistory> AccountHistories { get; set; }
     }
 }

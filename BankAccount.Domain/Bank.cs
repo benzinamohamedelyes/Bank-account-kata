@@ -7,7 +7,7 @@ namespace BankAccount.Domain
     {
         public int Id { get; set; }
         public string BankName { get; set; }
-        public IEnumerable<User> Clients { get; set; }
-        public IEnumerable<Account> Accounts { get; set; }
+        public ICollection<User> Clients { get; set; }
+        public ICollection<Account> Accounts { get; set; }
     }
 }

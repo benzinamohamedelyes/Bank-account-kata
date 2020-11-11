@@ -47,16 +47,35 @@ namespace Bank_account_kata.Services
 
         internal async Task<bool> MakeOperationOnAccount(int id, Operation operation, int amount)
         {
+            var operationSuccess = true;
             var account = await GetAccount(id);
+            var accountHistory = new AccountHistory()
+            {
+                Amount = amount,
+                Date = DateTime.Now,
+                Operation = operation
+            };
             if (operation == Operation.Deposit)
+            {
                 account.Balance = account.Balance + amount;
+                accountHistory.OperationStatus = OperationStatus.Approuved;
+            }
+
             else
             {
                 if ((account.Balance - amount) < 0)
-                    return false;
-                account.Balance = account.Balance - amount;
+                {
+                    accountHistory.OperationStatus = OperationStatus.Denied;
+                    operationSuccess = false;
+                }
+                else
+                {
+                    account.Balance = account.Balance - amount;
+                    accountHistory.OperationStatus = OperationStatus.Approuved;
+                }
             }
 
+            account.AccountHistories.Add(accountHistory);
             _context.Entry(account).State = EntityState.Modified;
 
             try
@@ -67,7 +86,7 @@ namespace Bank_account_kata.Services
             {
                 throw;
             }
-            return true;
+            return operationSuccess;
         }
         internal bool AccountExists(int id)
         {
