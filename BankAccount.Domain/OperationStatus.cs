@@ -4,9 +4,9 @@ using System.Text;
 
 namespace BankAccount.Domain
 {
-    public enum Operation
+    public enum OperationStatus
     {
-        Deposit = 0,
-        Withdrawal = 1
+        Approuved = 0,
+        Denied = 1
     }
 }

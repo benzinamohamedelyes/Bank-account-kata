@@ -11,6 +11,7 @@ namespace BankAccount.Domain
         public int Amount { get; set; }
         public DateTime Date { get; set; }
         public Account Account { get; set; }
+        public OperationStatus OperationStatus { get; set; }
 
     }
 }

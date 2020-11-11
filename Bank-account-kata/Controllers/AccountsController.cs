@@ -62,7 +62,7 @@ namespace Bank_account_kata.Controllers
         }
         // PUT: api/Accounts/5
         [HttpPost("{id}")]
-        public async Task<IActionResult> PutAccount(int id, [FromBody] TransactionViewModel transaction)
+        public async Task<IActionResult> MakeTransaction(int id, [FromBody] TransactionViewModel transaction)
         {
 
             if (_accountService.AccountExists(id))

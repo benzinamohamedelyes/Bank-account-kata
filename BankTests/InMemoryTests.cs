@@ -166,7 +166,7 @@ namespace BankTests
             }
         }
         [Fact]
-        public async Task PutAccount_MakeDepositAndWithdrawal()
+        public async Task MakeTransaction_MakeDepositAndWithdrawal()
         {
             await PostAccount_ReturnsIActionResult_WithAnAccount();
             var builder = new DbContextOptionsBuilder();
@@ -187,7 +187,7 @@ namespace BankTests
                     Amount = 300,
                     Operation = Operation.Deposit
                 };
-                var depositResult = await controller.PutAccount(accountId, transcation);
+                var depositResult = await controller.MakeTransaction(accountId, transcation);
                 depositResult.Should().BeOfType<AcceptedResult>();
                 var getAccountResult = await controller.GetAccount(1);
                 var account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
@@ -198,20 +198,80 @@ namespace BankTests
                     Amount = 300,
                     Operation = Operation.Withdrawal
                 };
-                depositResult = await controller.PutAccount(accountId, transcation);
+                depositResult = await controller.MakeTransaction(accountId, transcation);
                 depositResult.Should().BeOfType<AcceptedResult>();
                 getAccountResult = await controller.GetAccount(1);
                 account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(3);
 
-                depositResult = await controller.PutAccount(accountId, transcation);
+                depositResult = await controller.MakeTransaction(accountId, transcation);
                 depositResult.Should().BeOfType<UnauthorizedResult>();
                 getAccountResult = await controller.GetAccount(1);
                 account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(3);
 
-                depositResult = await controller.PutAccount(5, transcation);
+                depositResult = await controller.MakeTransaction(5, transcation);
                 depositResult.Should().BeOfType<NotFoundResult>();
+            }
+        }
+        [Fact]
+        public async Task MakeTransaction_ShouldHaveHistoty()
+        {
+            await PostAccount_ReturnsIActionResult_WithAnAccount();
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+                context.Database.EnsureCreated();
+                var controller = new AccountsController(new AccountService(context));
+
+                var result = await controller.GetAllAccounts();
+                var listAccounts = result.Value.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
+                listAccounts.Should().HaveCount(1);
+                var accountId = listAccounts.First().Id;
+
+                var transcation = new TransactionViewModel()
+                {
+                    Amount = 300,
+                    Operation = Operation.Deposit
+                };
+                var depositResult = await controller.MakeTransaction(accountId, transcation);
+                depositResult.Should().BeOfType<AcceptedResult>();
+                var getAccountResult = await controller.GetAccount(1);
+                var account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(303);
+                account.AccountHistories.Should().HaveCount(1);
+                account.AccountHistories.First().Operation.Should().Be(Operation.Deposit);
+                account.AccountHistories.First().Amount.Should().Be(300);
+                account.AccountHistories.First().OperationStatus.Should().Be(OperationStatus.Approuved);
+
+                var firstHistoryId = account.AccountHistories.First().Id;
+                transcation = new TransactionViewModel()
+                {
+                    Amount = 300,
+                    Operation = Operation.Withdrawal
+                };
+                depositResult = await controller.MakeTransaction(accountId, transcation);
+                depositResult.Should().BeOfType<AcceptedResult>();
+                getAccountResult = await controller.GetAccount(1);
+                account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(3);
+                account.AccountHistories.Should().HaveCount(2);
+                account.AccountHistories.First(h => h.Id != firstHistoryId).Operation.Should().Be(Operation.Withdrawal);
+                account.AccountHistories.First(h => h.Id != firstHistoryId).Amount.Should().Be(300);
+                account.AccountHistories.First(h => h.Id != firstHistoryId).OperationStatus.Should().Be(OperationStatus.Approuved);
+
+                var secondHistoryId = account.AccountHistories.First(h => h.Id != firstHistoryId).Id;
+                depositResult = await controller.MakeTransaction(accountId, transcation);
+                depositResult.Should().BeOfType<UnauthorizedResult>();
+                getAccountResult = await controller.GetAccount(1);
+                account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(3);
+                account.AccountHistories.Should().HaveCount(3);
+                account.AccountHistories.First(h => h.Id != firstHistoryId && h.Id != secondHistoryId).Operation.Should().Be(Operation.Withdrawal);
+                account.AccountHistories.First(h => h.Id != firstHistoryId && h.Id != secondHistoryId).Amount.Should().Be(300);
+                account.AccountHistories.First(h => h.Id != firstHistoryId && h.Id != secondHistoryId).OperationStatus.Should().Be(OperationStatus.Denied);
             }
         }
     }
