@@ -59,5 +59,12 @@ namespace Bank_account_kata.Controllers
             return new ActionResult<Account>(await _accountService.GetAccount(id));
 
         }
+        // PUT: api/Accounts/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAccount(int id, Operation operation, int amount)
+        {
+
+            throw new NotImplementedException();
+        }
     }
 }

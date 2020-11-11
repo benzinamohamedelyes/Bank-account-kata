@@ -37,6 +37,7 @@ namespace BankTests
 
             using (BankAccountContext context = new BankAccountContext(builder.Options))
             {
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
                 var controller = new AccountsController(new AccountService(context));
                 DataGenerator.Seed(context);
@@ -116,6 +117,45 @@ namespace BankTests
                 result = await controller.GetAccount(44);
                 result.Result.Should().BeOfType<NotFoundResult>();
 
+            }
+        }
+        [Fact]
+        public async Task PutAccount_MakeDepositAndWithdrawal()
+        {
+            await PostAccount_ReturnsIActionResult_WithAnAccount();
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+                context.Database.EnsureCreated();
+                var controller = new AccountsController(new AccountService(context));
+
+                var result = await controller.GetAllAccounts();
+                var listAccounts = result.Value.Should().BeAssignableTo<IEnumerable<Account>>().Subject;
+                listAccounts.Should().HaveCount(1);
+                var accountId = listAccounts.First().Id;
+
+                var depositResult = await controller.PutAccount(accountId, Operation.Deposit, 300);
+                depositResult.Should().BeOfType<AcceptedResult>();
+                var getAccountResult = await controller.GetAccount(1);
+                var account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(303);
+
+                depositResult = await controller.PutAccount(accountId, Operation.Withdrawal, 300);
+                depositResult.Should().BeOfType<AcceptedResult>();
+                getAccountResult = await controller.GetAccount(1);
+                account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(3);
+
+                depositResult = await controller.PutAccount(accountId, Operation.Withdrawal, 300);
+                depositResult.Should().BeOfType<UnauthorizedResult>();
+                getAccountResult = await controller.GetAccount(1);
+                account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(3);
+
+                depositResult = await controller.PutAccount(5, Operation.Withdrawal, 300);
+                depositResult.Should().BeOfType<NotFoundResult>();
             }
         }
     }
