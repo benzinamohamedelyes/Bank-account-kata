@@ -40,7 +40,7 @@ In order to complete this kata, I choose the following stack:
 - language: `C#`, `Typescript`
 - Framework: `.Net Core`, `Angular`
 - ORM: `Entity Framework Core`
-- unit test framework: `MSTest`
+- unit test framework: `XUnit`
 
 ## Conception
 

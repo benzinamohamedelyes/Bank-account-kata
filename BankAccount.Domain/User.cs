@@ -9,5 +9,6 @@ namespace BankAccount.Domain
         public int Id { get; set; }
         public string Name { get; set; }
         public Bank Bank { get; set; }
+        public Account Account { get; set; }
     }
 }
