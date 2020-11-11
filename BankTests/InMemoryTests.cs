@@ -1,5 +1,6 @@
 using Bank_account_kata.Controllers;
 using Bank_account_kata.Services;
+using Bank_account_kata.ViewModels;
 using BankAccount.Data;
 using BankAccount.Domain;
 using FluentAssertions;
@@ -47,7 +48,7 @@ namespace BankTests
                 user.Should().NotBeNull();
 
                 Account newAccount = new Account();
-                
+
                 var result = await controller.PostAccount(newAccount);
 
                 result.Should().BeOfType<BadRequestResult>();
@@ -84,7 +85,7 @@ namespace BankTests
                 var user = context.Users.FirstOrDefault();
                 user.Should().NotBeNull();
 
-                Account newAccount =  new Account()
+                Account newAccount = new Account()
                 {
                     Bank = bank,
                     Owner = user,
@@ -108,7 +109,7 @@ namespace BankTests
             {
                 context.Database.EnsureCreated();
                 var controller = new AccountsController(new AccountService(context));
-                
+
                 var result = await controller.GetAccount(1);
                 var account = result.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(3);
@@ -136,25 +137,35 @@ namespace BankTests
                 listAccounts.Should().HaveCount(1);
                 var accountId = listAccounts.First().Id;
 
-                var depositResult = await controller.PutAccount(accountId, Operation.Deposit, 300);
+                var transcation = new TransactionViewModel()
+                {
+                    Amount = 300,
+                    Operation = Operation.Deposit
+                };
+                var depositResult = await controller.PutAccount(accountId, transcation);
                 depositResult.Should().BeOfType<AcceptedResult>();
                 var getAccountResult = await controller.GetAccount(1);
                 var account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(303);
 
-                depositResult = await controller.PutAccount(accountId, Operation.Withdrawal, 300);
+                transcation = new TransactionViewModel()
+                {
+                    Amount = 300,
+                    Operation = Operation.Withdrawal
+                };
+                depositResult = await controller.PutAccount(accountId, transcation);
                 depositResult.Should().BeOfType<AcceptedResult>();
                 getAccountResult = await controller.GetAccount(1);
                 account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(3);
 
-                depositResult = await controller.PutAccount(accountId, Operation.Withdrawal, 300);
+                depositResult = await controller.PutAccount(accountId, transcation);
                 depositResult.Should().BeOfType<UnauthorizedResult>();
                 getAccountResult = await controller.GetAccount(1);
                 account = getAccountResult.Value.Should().BeAssignableTo<Account>().Subject;
                 account.Balance.Should().Be(3);
 
-                depositResult = await controller.PutAccount(5, Operation.Withdrawal, 300);
+                depositResult = await controller.PutAccount(5, transcation);
                 depositResult.Should().BeOfType<NotFoundResult>();
             }
         }

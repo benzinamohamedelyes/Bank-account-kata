@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BankAccount.Data;
 using BankAccount.Domain;
 using Bank_account_kata.Services;
+using Bank_account_kata.ViewModels;
 
 namespace Bank_account_kata.Controllers
 {
@@ -60,13 +61,13 @@ namespace Bank_account_kata.Controllers
 
         }
         // PUT: api/Accounts/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAccount(int id, Operation operation, int amount)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> PutAccount(int id, [FromBody] TransactionViewModel transaction)
         {
 
             if (_accountService.AccountExists(id))
             {
-                if (await _accountService.MakeOperationOnAccount(id, operation, amount))
+                if (await _accountService.MakeOperationOnAccount(id, transaction.Operation, transaction.Amount))
                     return Accepted();
                 else
                     return Unauthorized();
