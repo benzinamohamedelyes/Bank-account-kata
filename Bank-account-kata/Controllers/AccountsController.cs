@@ -64,7 +64,15 @@ namespace Bank_account_kata.Controllers
         public async Task<IActionResult> PutAccount(int id, Operation operation, int amount)
         {
 
-            throw new NotImplementedException();
+            if (_accountService.AccountExists(id))
+            {
+                if (await _accountService.MakeOperationOnAccount(id, operation, amount))
+                    return Accepted();
+                else
+                    return Unauthorized();
+            }
+            else
+                return NotFound();
         }
     }
 }
