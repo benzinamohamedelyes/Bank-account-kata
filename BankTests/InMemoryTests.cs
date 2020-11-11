@@ -31,6 +31,29 @@ namespace BankTests
             }
         }
         [Fact]
+        public async Task GetBankById_ReturnsIActionResult_WithABank()
+        {
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+
+                context.Database.EnsureCreated();
+                DataGenerator.Seed(context);
+                var controller = new BanksController(new BankService(context));
+
+                var result = await controller.GetBank(1);
+                var bank = result.Value.Should().BeAssignableTo<Bank>().Subject;
+                bank.BankName.Should().Be("The Awsome Bank");
+                bank.Id.Should().Be(1);
+
+                result = await controller.GetBank(44);
+                result.Result.Should().BeOfType<NotFoundResult>();
+
+            }
+        }
+        [Fact]
         public async Task PostAccount_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
@@ -70,7 +93,7 @@ namespace BankTests
             }
         }
         [Fact]
-        public async Task GetAccount_ReturnsIActionResult_WithAnAccount()
+        public async Task GetAccounts_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
             builder.UseInMemoryDatabase("BankDataBaseTwo");

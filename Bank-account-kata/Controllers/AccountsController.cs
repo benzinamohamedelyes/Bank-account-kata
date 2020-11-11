@@ -34,7 +34,7 @@ namespace Bank_account_kata.Controllers
                 else
                     return BadRequest();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -57,7 +57,7 @@ namespace Bank_account_kata.Controllers
                 return NotFound();
             }
 
-            return new ActionResult<Account>(await _accountService.GetAccount(id));
+            return new ActionResult<Account>(account);
 
         }
         // PUT: api/Accounts/5
