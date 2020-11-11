@@ -26,7 +26,14 @@ namespace Bank_account_kata.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Bank>> GetBank(int id)
         {
-            throw new NotImplementedException();
+            var bank = await _bankService.GetBank(id);
+
+            if (bank == null)
+            {
+                return NotFound();
+            }
+
+            return new ActionResult<Bank>(bank);
         }
     }
 }
