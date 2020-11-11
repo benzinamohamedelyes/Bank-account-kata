@@ -23,7 +23,8 @@ namespace Bank_account_kata
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BankAccountContext>(options => options.UseInMemoryDatabase(databaseName: "BankDataBase"));
-            services.AddControllersWithViews();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -31,6 +32,7 @@ namespace Bank_account_kata
             });
             services.AddTransient<AccountService>();
             services.AddTransient<BankService>();
+            services.AddTransient<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

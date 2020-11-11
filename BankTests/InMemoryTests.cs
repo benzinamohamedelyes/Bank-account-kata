@@ -54,6 +54,28 @@ namespace BankTests
             }
         }
         [Fact]
+        public async Task GetUserById_ReturnsIActionResult_WithAUser()
+        {
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+
+                context.Database.EnsureCreated();
+                DataGenerator.Seed(context);
+                var controller = new UsersController(new UserService(context));
+
+                var result = await controller.GetUser(1);
+                var user = result.Value.Should().BeAssignableTo<User>().Subject;
+                user.Name.Should().Be("Partik");
+                user.Id.Should().Be(1);
+
+                result = await controller.GetUser(44);
+                result.Result.Should().BeOfType<NotFoundResult>();
+            }
+        }
+        [Fact]
         public async Task PostAccount_ReturnsIActionResult_WithAnAccount()
         {
             var builder = new DbContextOptionsBuilder();
