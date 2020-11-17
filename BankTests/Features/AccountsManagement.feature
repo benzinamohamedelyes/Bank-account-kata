@@ -19,3 +19,9 @@
   When Alin make a withdrawal of 10
   Then Alin should have a balance of 22 in his account
 
+  Scenario: Withdrawal 40 from an account with a balance of 32
+  Given a created account by Alin containing 32
+  When Alin make a withdrawal of 40
+  Then Alin should have a balance of 32 in his account
+
+  
