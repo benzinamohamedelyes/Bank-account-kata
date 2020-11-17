@@ -21,5 +21,10 @@ namespace Bank_account_kata.Services
             var user = await _context.Users.Include(u => u.Bank).FirstOrDefaultAsync(u=> u.Id == id);
             return user;
         }
+        public async Task<User> GetUserByName(string name)
+        {
+            var user = await _context.Users.Include(u => u.Bank).FirstOrDefaultAsync(u => u.Name == name);
+            return user;
+        }
     }
 }
