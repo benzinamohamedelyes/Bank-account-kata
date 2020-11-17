@@ -63,7 +63,15 @@ namespace Bank_account_kata.Controllers
         [HttpPost()]
         public async Task<ActionResult<Account>> GetAccount([FromBody]User user)
         {
-            throw new NotImplementedException();    
+            var account = await _accountService.GetAccount(user);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return new ActionResult<Account>(account);
+
         }
         // PUT: api/Accounts/5
         [HttpPost("{id}")]
