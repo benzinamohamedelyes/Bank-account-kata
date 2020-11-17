@@ -21,6 +21,8 @@ namespace BankTests.Drivers
             var builder = new DbContextOptionsBuilder();
             builder.UseInMemoryDatabase("BDDBankDataBase");
             _context = new BankAccountContext(builder.Options);
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
         }
         public void Seed(string userName = "Patrik", string bankName = "The Awsome Bank")
         {
