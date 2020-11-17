@@ -24,4 +24,6 @@
   When Alin make a withdrawal of 40
   Then Alin should have a balance of 32 in his account
 
-  
+  Scenario: Show the history of transactions on an account
+  Given Alin make 3 transactions on his account
+  Then Alin should have 3 account events

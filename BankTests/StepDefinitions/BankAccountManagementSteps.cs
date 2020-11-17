@@ -100,7 +100,20 @@ namespace BankTests.StepDefinitions
             account.Balance.Should().Be(amount);
         }
 
-        
+        [Given(@"(\D+) make 3 transactions on his account")]
+        public void GivenUserMakeTransactionsOnHisAccount(string userName)
+        {
+            WhenUserMakeADepositOf(userName, 10);
+            WhenUserMakeAWithdrawlOf(userName, 40);
+            WhenUserMakeAWithdrawlOf(userName, 40);
+        }
+
+        [Then(@"(\D+) should have (\d+) account events")]
+        public async void ThenUserShouldHaveAccountEvents(string userName, int numberOfTransaction)
+        {
+            var account = await GetAccountByUserName(userName);
+            account.AccountHistories.Should().HaveCount(numberOfTransaction);
+        }
         private async Task<Account> GetAccountByUserName(string userName)
         {
             var user = await _driver.GetUserByName(userName);
