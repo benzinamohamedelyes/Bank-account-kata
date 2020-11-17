@@ -60,6 +60,11 @@ namespace Bank_account_kata.Controllers
             return new ActionResult<Account>(account);
 
         }
+        [HttpPost()]
+        public async Task<ActionResult<Account>> GetAccount([FromBody]User user)
+        {
+            throw new NotImplementedException();    
+        }
         // PUT: api/Accounts/5
         [HttpPost("{id}")]
         public async Task<IActionResult> MakeTransaction(int id, [FromBody] TransactionViewModel transaction)
