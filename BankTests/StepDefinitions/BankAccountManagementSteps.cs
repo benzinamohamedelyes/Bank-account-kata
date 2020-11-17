@@ -66,6 +66,40 @@ namespace BankTests.StepDefinitions
             account.Balance.Should().Be(amount);
         }
 
+        [Given(@"a created account by (\D+) containing (\d+)")]
+        public async void GivenACreatedAccountByUserWithPositiveBalance(string userName, int balance)
+        {
+            var account = await GetAccountByUserName(userName);
+            account.Should().NotBeNull();
+            account.Balance.Should().Be(balance);
+        }
+
+        [When(@"(\D+) make a withdrawal of (\d+)")]
+        public async void WhenUserMakeAWithdrawlOf(string userName, int amount)
+        {
+            var account = await GetAccountByUserName(userName);
+            var formerAccountBalance = account.Balance;
+            var transcation = new TransactionViewModel()
+            {
+                Amount = amount,
+                Operation = Operation.Withdrawal
+            };
+            var depositResult = await _driver.MakeTransaction(account.Id, transcation);
+
+            if (formerAccountBalance - amount > 0)
+                depositResult.Should().BeTrue();
+            else
+                depositResult.Should().BeFalse();
+        }
+
+        [Then(@"(\D+) should have a balance of (\d+) in his account")]
+        public async void ThenUserShouldHaveABalanceOfInHisAccount(string userName, int amount)
+        {
+            var account = await GetAccountByUserName(userName);
+            account.Should().NotBeNull();
+            account.Balance.Should().Be(amount);
+        }
+
         
         private async Task<Account> GetAccountByUserName(string userName)
         {
