@@ -37,10 +37,11 @@ Think of your personal bank account experience When in doubt, go for the simples
 
 ## Technical stack
 In order to complete this kata, I choose the following stack:
-- language: `C#`, `Typescript`
+- Language: `C#`, `Typescript`
 - Framework: `.Net Core`, `Angular`
 - ORM: `Entity Framework Core`
-- unit test framework: `XUnit`
+- Unit test framework: `XUnit`
+- Fonctional test framework: `SpecFlow`
 
 ## Conception
 

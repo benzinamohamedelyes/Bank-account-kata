@@ -18,7 +18,7 @@ namespace BankAccount.Data
                 Seed(context);
             }
         }
-        public static void Seed(BankAccountContext context)
+        public static void Seed(BankAccountContext context, string userName = "Partik", string bankName = "The Awsome Bank")
         {
             if (context.Banks.Any())
             {
@@ -26,12 +26,12 @@ namespace BankAccount.Data
             }
             Domain.Bank newBank = new Domain.Bank()
             {
-                BankName = "The Awsome Bank"
+                BankName = bankName
             };
             context.Banks.Add(newBank);
             Domain.User newUser = new Domain.User()
             {
-                Name = "Partik",
+                Name = userName,
                 Bank = newBank
             };
             context.Users.Add(newUser);

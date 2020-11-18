@@ -166,6 +166,30 @@ namespace BankTests
             }
         }
         [Fact]
+        public async Task GetAccountByUser_ReturnsIActionResult_WithAnAccount()
+        {
+            await PostAccount_ReturnsIActionResult_WithAnAccount();
+            var builder = new DbContextOptionsBuilder();
+            builder.UseInMemoryDatabase("BankDataBase");
+
+            using (BankAccountContext context = new BankAccountContext(builder.Options))
+            {
+                context.Database.EnsureCreated();
+                var accountsController = new AccountsController(new AccountService(context));
+                var usersController = new UsersController(new UserService(context));
+
+                var userResult = await usersController.GetUser(1);
+                var user = userResult.Value.Should().BeAssignableTo<User>().Subject;
+                user.Name.Should().Be("Partik");
+                user.Id.Should().Be(1);
+
+                var result = await accountsController.GetAccount(user);
+                var account = result.Value.Should().BeAssignableTo<Account>().Subject;
+                account.Balance.Should().Be(3);
+                account.Id.Should().Be(1);
+            }
+        }
+        [Fact]
         public async Task MakeTransaction_MakeDepositAndWithdrawal()
         {
             await PostAccount_ReturnsIActionResult_WithAnAccount();

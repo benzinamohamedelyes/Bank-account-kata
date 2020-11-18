@@ -44,6 +44,11 @@ namespace Bank_account_kata.Services
             var account = await _context.Accounts.FindAsync(id);
             return account;
         }
+        internal async Task<Account> GetAccount(User user)
+        {
+            var account = await _context.Accounts.Where(a => a.UserId == user.Id).FirstOrDefaultAsync();
+            return account;
+        }
 
         internal async Task<bool> MakeOperationOnAccount(int id, Operation operation, int amount)
         {
