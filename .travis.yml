@@ -13,10 +13,14 @@ matrix:
       - ng lint
       - ng build --prod
     - language: csharp
+      services:
+        - docker
       mono: none
       dotnet: 3.1
       solution: ./Bank-account-kata/Bank-account-kata.sln
       script:
         - dotnet restore Bank-account-kata
-        - dotnet build Bank-account-kata
+        - dotnet build -c release Bank-account-kata
         - dotnet test ./BankTests/BankTests.csproj
+        - dotnet publish -c release --no-build -o ./out
+        - docker build -t bank-account-kata:v0 .
