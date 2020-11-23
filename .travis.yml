@@ -7,7 +7,6 @@ solution: ./Bank-account-kata/Bank-account-kata.sln
 before-script:
   - sudo apt-get install -y wget 
   - sudo apt-get install -y gnupg2
-  - sudo wget -qO- https://deb.nodesource.com/setup_12.x | bash
   - sudo apt-get install -y build-essential nodejs
 script:
   - dotnet restore Bank-account-kata
