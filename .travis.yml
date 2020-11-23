@@ -15,6 +15,7 @@ script:
   - dotnet build -c release Bank-account-kata
   - dotnet test ./BankTests/BankTests.csproj
   - dotnet publish Bank-account-kata -c release --no-build -o ./out 
+  - docker build -t bank-account-kata:v0 .  
 addons:
   apt:
     update: true
