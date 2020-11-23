@@ -4,14 +4,16 @@ services:
 mono: none
 dotnet: 3.1
 solution: ./Bank-account-kata/Bank-account-kata.sln 
+before-script:
+  - sudo apt-get install -y wget 
+  - sudo apt-get install -y gnupg2
+  - sudo wget -qO- https://deb.nodesource.com/setup_12.x | bash
+  - sudo apt-get install -y build-essential nodejs
 script:
   - dotnet restore Bank-account-kata
   - dotnet build -c release Bank-account-kata
   - dotnet test ./BankTests/BankTests.csproj
-  - dotnet publish Bank-account-kata -c release --no-build -o ./out
-  - docker build -t bank-account-kata:v0 .  
+  - dotnet publish Bank-account-kata -c release --no-build -o ./out 
 addons:
   apt:
-    packages:
-      - build-essential 
-      - nodejs
+    update: true
