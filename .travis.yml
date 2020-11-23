@@ -8,7 +8,6 @@ env:
   - NODE_VERSION=0.12
 install:
   - nvm install $NODE_VERSION
-  - npm install
 script:
   - nvm use $NODE_VERSION
   - dotnet restore Bank-account-kata
