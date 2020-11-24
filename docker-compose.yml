@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  bank-account-data:
+    image: ebenzina/bank-account-kata:v0
+    ports:
+      - "80:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Prod
+      - DB_HOST=
+      - DB_USERNAME=
+      - DB_PASSWORD=
