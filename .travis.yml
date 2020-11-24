@@ -15,8 +15,10 @@ script:
   - dotnet build -c release Bank-account-kata
   - dotnet test ./BankTests/BankTests.csproj
   - dotnet publish Bank-account-kata -c release --no-build -o ./out 
-  - docker build -t ebenzina/bank-account-kata:v0 .  
+  - docker build -t ebenzina/bank-account-kata:v0 .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push ebenzina/bank-account-kata:v0
+  - docker logout
 addons:
   apt:
     update: true
