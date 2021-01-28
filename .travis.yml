@@ -1,22 +1,24 @@
-matrix:
-  include:
-    - language: node_js
-      node_js:
-      - "14.15.0"
-      dist: trusty
-      sudo: required
-      before_script:
-        - npm install -g @angular/cli
-      script:
-      - cd ./Bank-account-kata/ClientApp
-      - npm install
-      - ng lint
-      - ng build --prod
-    - language: csharp
-      mono: none
-      dotnet: 3.1
-      solution: ./Bank-account-kata/Bank-account-kata.sln
-      script:
-        - dotnet restore Bank-account-kata
-        - dotnet build Bank-account-kata
-        - dotnet test ./BankTests/BankTests.csproj
+language: csharp
+services:
+  - docker
+mono: none
+dotnet: 3.1
+solution: ./Bank-account-kata/Bank-account-kata.sln 
+env:
+  - NODE_VERSION=12
+install:
+  - nvm install $NODE_VERSION
+  - sudo apt-get install -y build-essential
+script:
+  - nvm use $NODE_VERSION
+  - dotnet restore Bank-account-kata
+  - dotnet build -c release Bank-account-kata
+  - dotnet test ./BankTests/BankTests.csproj
+  - dotnet publish Bank-account-kata -c release --no-build -o ./out 
+  - docker build -t ebenzina/bank-account-kata:v0 .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push ebenzina/bank-account-kata:v0
+  - docker logout
+addons:
+  apt:
+    update: true
